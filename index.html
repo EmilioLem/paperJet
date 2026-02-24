@@ -8,19 +8,23 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body class="theme-light">
+<body class="theme-warm">
     <header>
-        <div class="logo-container">
-            <div class="logo">PaperJet</div>
-            <span id="pdf-name"></span>
+        <div id="blob-left" class="floating-blob">
+            <div class="logo-container">
+                <div class="logo">PaperJet</div>
+                <span id="pdf-name"></span>
+            </div>
         </div>
-        <div class="controls-top">
-            <select id="theme-select">
-                <option value="theme-light">Light</option>
-                <option value="theme-dark">Dark</option>
-                <option value="theme-warm">Warm</option>
-            </select>
-            <input type="file" id="file-upload" accept="application/pdf">
+        <div id="blob-right" class="floating-blob">
+            <div class="controls-top">
+                <select id="theme-select">
+                    <option value="theme-light">Light</option>
+                    <option value="theme-dark">Dark</option>
+                    <option value="theme-warm" selected>Warm</option>
+                </select>
+                <input type="file" id="file-upload" accept="application/pdf">
+            </div>
         </div>
     </header>
 

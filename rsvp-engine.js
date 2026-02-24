@@ -12,10 +12,10 @@ export class RsvpEngine {
         this.onProgress = null;
     }
 
-    setWords(words) {
+    setWords(words, startIndex = 0) {
         this.words = words;
-        this.currentIndex = 0;
-        this.updateDisplay();
+        this.currentIndex = startIndex;
+        this.updateDisplay(false); // Skip callback during initial set
     }
 
     setWpm(wpm) {
@@ -56,7 +56,7 @@ export class RsvpEngine {
         this.updateDisplay();
     }
 
-    updateDisplay() {
+    updateDisplay(triggerCallback = true) {
         if (this.words.length === 0) return;
         const word = this.words[this.currentIndex];
         const parts = this.processWord(word);
@@ -65,7 +65,7 @@ export class RsvpEngine {
         this.display.focus.textContent = parts.focus;
         this.display.right.textContent = parts.right;
 
-        if (this.onProgress) {
+        if (triggerCallback && this.onProgress) {
             const percent = Math.floor((this.currentIndex / this.words.length) * 100);
             this.onProgress(percent, this.currentIndex);
         }

@@ -40,14 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const words = await extractWordsFromPdf(file);
-            engine.setWords(words);
-            progressSlider.max = words.length - 1;
-
-            // Load progress
             const savedIndex = localStorage.getItem(`paperjet-progress-${file.name}`);
-            if (savedIndex !== null) {
-                engine.seek(parseInt(savedIndex));
-            }
+            const startIndex = savedIndex ? parseInt(savedIndex) : 0;
+
+            engine.setWords(words, startIndex);
+            progressSlider.max = words.length - 1;
         } catch (error) {
             console.error('Error processing PDF:', error);
             alert('Failed to process PDF. Please try another one.');
