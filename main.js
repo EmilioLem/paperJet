@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextBtn = document.getElementById('next-btn');
     const progressSlider = document.getElementById('progress-slider');
     const progressText = document.getElementById('progress-text');
+    const pdfNameDisplay = document.getElementById('pdf-name');
 
     const readerContainer = document.getElementById('reader-container');
     const welcomeScreen = document.getElementById('welcome-screen');
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         welcomeScreen.classList.add('hidden');
         readerContainer.classList.remove('hidden');
+        pdfNameDisplay.textContent = file.name;
 
         try {
             const words = await extractWordsFromPdf(file);

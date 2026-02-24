@@ -4,7 +4,7 @@
     --accent-color: #e74c3c;
     --panel-bg: #f8f9fa;
     --border-color: #dddddd;
-    --font-huge: 12vw;
+    --font-huge: 9vw;
     --focus-pos: 35%;
 }
 
@@ -50,10 +50,25 @@ header {
     background: var(--panel-bg);
 }
 
+.logo-container {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+}
+
 .logo {
     font-weight: bold;
     font-size: 1.5rem;
     letter-spacing: -1px;
+}
+
+#pdf-name {
+    font-size: 0.9rem;
+    opacity: 0.6;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .controls-top {
@@ -117,10 +132,10 @@ main {
 #focus-line-bottom {
     position: absolute;
     left: var(--focus-pos);
-    width: 2px;
-    height: 30px;
+    width: 1px;
+    height: 15px;
     background-color: var(--accent-color);
-    opacity: 0.5;
+    opacity: 0.3;
     transform: translateX(-50%);
 }
 

@@ -72,6 +72,11 @@ export class RsvpEngine {
     }
 
     processWord(word) {
+        // Handle newline marker
+        if (word === '\\n') {
+            return { left: '', focus: ' ', right: '' };
+        }
+
         // Highlighting rules:
         // Punctuation is not counted for index.
         const focusIndices = { 1: 0, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 2, 10: 3, 11: 3, 12: 3, 13: 3 };

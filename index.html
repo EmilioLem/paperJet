@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PaperJet - PDF RSVP Reader</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body class="theme-light">
     <header>
-        <div class="logo">PaperJet</div>
+        <div class="logo-container">
+            <div class="logo">PaperJet</div>
+            <span id="pdf-name"></span>
+        </div>
         <div class="controls-top">
             <select id="theme-select">
                 <option value="theme-light">Light</option>
@@ -68,4 +73,5 @@
 
     <script type="module" src="/main.js"></script>
 </body>
+
 </html>
