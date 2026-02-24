@@ -18,10 +18,14 @@
         </div>
         <div id="blob-right" class="floating-blob">
             <div class="controls-top">
+                <select id="lang-select">
+                    <option value="es">Español</option>
+                    <option value="en">English</option>
+                </select>
                 <select id="theme-select">
-                    <option value="theme-light">Light</option>
-                    <option value="theme-dark">Dark</option>
-                    <option value="theme-warm" selected>Warm</option>
+                    <option value="theme-light" data-i18n="theme-light">Luz</option>
+                    <option value="theme-dark" data-i18n="theme-dark">Oscuro</option>
+                    <option value="theme-warm" data-i18n="theme-warm" selected>Cálido</option>
                 </select>
                 <input type="file" id="file-upload" accept="application/pdf">
             </div>
@@ -40,9 +44,9 @@
         </div>
 
         <div id="welcome-screen">
-            <h1>Welcome to PaperJet</h1>
-            <p>Upload a PDF to start reading at light speed.</p>
-            <label for="file-upload" class="upload-btn">Choose PDF</label>
+            <h1 data-i18n="welcome-title">Bienvenido a PaperJet</h1>
+            <p data-i18n="welcome-subtitle">Sube un PDF para empezar a leer a la velocidad de la luz.</p>
+            <label for="file-upload" class="upload-btn" data-i18n="choose-pdf">Elegir PDF</label>
         </div>
     </main>
 
@@ -51,8 +55,12 @@
             <div class="speed-control">
                 <label for="wpm-select">WPM:</label>
                 <select id="wpm-select">
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="150">150</option>
+                    <option value="200">200</option>
                     <option value="300">300</option>
-                    <option value="400">400</option>
+                    <option value="400" selected>400</option>
                     <option value="500">500</option>
                     <option value="600" selected>600</option>
                     <option value="800">800</option>
@@ -62,10 +70,32 @@
                     <option value="2000">2000</option>
                 </select>
             </div>
+            <div class="reading-options">
+                <div class="toggle-group">
+                    <label data-i18n="newline-pause">Pausa de Nueva Línea:</label>
+                    <input type="checkbox" id="newline-pause-toggle" checked>
+                </div>
+                <div class="break-control">
+                    <label for="break-select" data-i18n="break-every">Romper cada:</label>
+                    <select id="break-select">
+                        <option value="0" data-i18n="never">Nunca</option>
+                        <option value="1" data-i18n="1-para">1 Párrafo</option>
+                        <option value="3" data-i18n="3-para">3 Párrafos</option>
+                        <option value="5" data-i18n="5-para">5 Párrafos</option>
+                        <option value="10" data-i18n="10-para">10 Párrafos</option>
+                        <option value="15" data-i18n="15-para">15 Párrafos</option>
+                        <option value="30" data-i18n="30-para">30 Párrafos</option>
+                        <option value="50" data-i18n="50-para">50 Párrafos</option>
+                        <option value="100" data-i18n="100-para">100 Párrafos</option>
+                        <option value="250" data-i18n="250-para">250 Párrafos</option>
+                        <option value="500" data-i18n="500-para">500 Párrafos</option>
+                    </select>
+                </div>
+            </div>
             <div class="playback-controls">
                 <button id="prev-btn">◀◀</button>
-                <button id="play-pause-btn">Play</button>
-                <button id="restart-btn">Restart</button>
+                <button id="play-pause-btn" data-i18n="play">Reproducir</button>
+                <button id="restart-btn" data-i18n="restart">Reiniciar</button>
                 <button id="next-btn">▶▶</button>
             </div>
             <div class="progress-container">

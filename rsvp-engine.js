@@ -10,6 +10,11 @@ export class RsvpEngine {
         this.wpm = 600;
         this.timer = null;
         this.onProgress = null;
+
+        // New controls
+        this.newlineEnabled = true;
+        this.breakEvery = 0; // 0 means never
+        this.paragraphCount = 0;
     }
 
     setWords(words, startIndex = 0) {
@@ -36,6 +41,7 @@ export class RsvpEngine {
     restart() {
         this.pause();
         this.currentIndex = 0;
+        this.paragraphCount = 0; // Reset count
         this.updateDisplay();
     }
 
@@ -133,7 +139,7 @@ export class RsvpEngine {
         if (word.includes(':')) extra += 160;
         if (word.includes('.')) extra += 220;
         if (word.includes('?') || word.includes('!')) extra += 250;
-        if (word.includes('\\n')) extra += 300; // Special marker for newlines
+        if (word.includes('\\n') && this.newlineEnabled) extra += 300;
 
         return (baseDelay * factor) + extra;
     }
@@ -143,7 +149,17 @@ export class RsvpEngine {
 
         this.updateDisplay();
 
-        const delay = this.calculateDelay(this.words[this.currentIndex]);
+        const word = this.words[this.currentIndex];
+        let delay = this.calculateDelay(word);
+
+        // Handle "Break Every X Paragraphs"
+        if (word === '\\n') {
+            this.paragraphCount++;
+            if (this.breakEvery > 0 && this.paragraphCount >= this.breakEvery) {
+                delay = 3000; // 3 second break
+                this.paragraphCount = 0; // Reset count after break
+            }
+        }
 
         this.timer = setTimeout(() => {
             this.currentIndex++;

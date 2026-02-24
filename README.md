@@ -6,7 +6,9 @@ A modern, minimal PDF RSVP (Rapid Serial Visual Presentation) reader. Read PDFs 
 - **PDF Extraction**: Converts PDF content into a readable stream.
 - **RSVP Engine**: Highlights the optimal focus point for each word.
 - **Customizable Themes**: Light, Dark, and Soft Warm modes.
-- **Variable Speed**: 300 to 2000 words per minute.
+- **Localization**: Supports English and Spanish interfaces.
+- **Persistent Settings**: Remembers your preferred theme, language, and reading progress automatically.
+- **Variable Speed**: Ultra-low to high speed (50 to 2000 WPM).
 
 ## RSVP Rules
 
@@ -36,7 +38,10 @@ To improve comprehension, PaperJet adjusts the speed based on word length and pu
 - `:`: +160 ms
 - `.`: +220 ms
 - `?` or `!`: +250 ms
-- Newline: +300 ms
+- Newline: +300 ms (can be disabled via "Newline Pause" toggle)
+
+### Paragraph Breaks
+The "Break every" selector allows you to insert a **3-second pause** after a specific number of paragraphs (marked by newlines in the PDF). This is useful for absorbing content in chunks.
 
 ## Development
 ```bash
