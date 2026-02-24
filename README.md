@@ -25,10 +25,10 @@ To improve comprehension, PaperJet adjusts the speed based on word length and pu
 
 #### Length Factors
 - 1–5 characters: 1.0x (base)
-- 6–8 characters: 1.1x
-- 9–12 characters: 1.2x
-- 13–16 characters: 1.35x
-- 17+ characters: 1.5x
+- 6–8 characters: 1.2x
+- 9–12 characters: 1.4x
+- 13–16 characters: 1.7x
+- 17+ characters: 2.0x
 
 #### Punctuation Delays
 - `,`: +100 ms

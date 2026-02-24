@@ -122,10 +122,10 @@ export class RsvpEngine {
         const len = cleanWord.length;
 
         let factor = 1.0;
-        if (len >= 6 && len <= 8) factor = 1.1;
-        else if (len >= 9 && len <= 12) factor = 1.2;
-        else if (len >= 13 && len <= 16) factor = 1.35;
-        else if (len >= 17) factor = 1.5;
+        if (len >= 6 && len <= 8) factor = 1.2;
+        else if (len >= 9 && len <= 12) factor = 1.4;
+        else if (len >= 13 && len <= 16) factor = 1.7;
+        else if (len >= 17) factor = 2.0;
 
         let extra = 0;
         if (word.includes(',')) extra += 100;

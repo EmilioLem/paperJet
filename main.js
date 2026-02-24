@@ -42,6 +42,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const words = await extractWordsFromPdf(file);
             engine.setWords(words);
             progressSlider.max = words.length - 1;
+
+            // Load progress
+            const savedIndex = localStorage.getItem(`paperjet-progress-${file.name}`);
+            if (savedIndex !== null) {
+                engine.seek(parseInt(savedIndex));
+            }
         } catch (error) {
             console.error('Error processing PDF:', error);
             alert('Failed to process PDF. Please try another one.');
@@ -78,6 +84,14 @@ document.addEventListener('DOMContentLoaded', () => {
     engine.onProgress = (percent, index) => {
         progressSlider.value = index;
         progressText.textContent = `${percent}%`;
+
+        // Save progress if a file is loaded
+        if (engine.words.length > 0) {
+            const fileName = pdfNameDisplay.textContent;
+            if (fileName) {
+                localStorage.setItem(`paperjet-progress-${fileName}`, index);
+            }
+        }
     };
 
     engine.onComplete = () => {
