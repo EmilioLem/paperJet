@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaperJet - PDF RSVP Reader</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-light">
+    <header>
+        <div class="logo">PaperJet</div>
+        <div class="controls-top">
+            <select id="theme-select">
+                <option value="theme-light">Light</option>
+                <option value="theme-dark">Dark</option>
+                <option value="theme-warm">Warm</option>
+            </select>
+            <input type="file" id="file-upload" accept="application/pdf">
+        </div>
+    </header>
+
+    <main>
+        <div id="reader-container" class="hidden">
+            <div id="focus-line-top"></div>
+            <div id="reader-display">
+                <div id="word-container">
+                    <span id="word-left"></span><span id="word-focus"></span><span id="word-right"></span>
+                </div>
+            </div>
+            <div id="focus-line-bottom"></div>
+        </div>
+
+        <div id="welcome-screen">
+            <h1>Welcome to PaperJet</h1>
+            <p>Upload a PDF to start reading at light speed.</p>
+            <label for="file-upload" class="upload-btn">Choose PDF</label>
+        </div>
+    </main>
+
+    <footer>
+        <div class="controls-bottom">
+            <div class="speed-control">
+                <label for="wpm-select">WPM:</label>
+                <select id="wpm-select">
+                    <option value="300">300</option>
+                    <option value="400">400</option>
+                    <option value="500">500</option>
+                    <option value="600" selected>600</option>
+                    <option value="800">800</option>
+                    <option value="1000">1000</option>
+                    <option value="1200">1200</option>
+                    <option value="1500">1500</option>
+                    <option value="2000">2000</option>
+                </select>
+            </div>
+            <div class="playback-controls">
+                <button id="prev-btn">◀◀</button>
+                <button id="play-pause-btn">Play</button>
+                <button id="restart-btn">Restart</button>
+                <button id="next-btn">▶▶</button>
+            </div>
+            <div class="progress-container">
+                <input type="range" id="progress-slider" min="0" max="100" value="0">
+                <span id="progress-text">0%</span>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="/main.js"></script>
+</body>
+</html>

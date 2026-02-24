@@ -1,2 +1,45 @@
-# paperJet
-This project attempts to replicate the fast reading method circulating on social media, on which a lecture is presented one word at a time, significantly increasing reading speed by avoiding the task of looking for the next word, process which can take most of our reading time. It's also easier for our eyesight.. or is it? We will see!!! 
+# PaperJet ✈️
+
+A modern, minimal PDF RSVP (Rapid Serial Visual Presentation) reader. Read PDFs at light speed with Spritz-style highlighting.
+
+## Features
+- **PDF Extraction**: Converts PDF content into a readable stream.
+- **RSVP Engine**: Highlights the optimal focus point for each word.
+- **Customizable Themes**: Light, Dark, and Soft Warm modes.
+- **Variable Speed**: 300 to 2000 words per minute.
+
+## RSVP Rules
+
+### Highlighting (Focus Point)
+PaperJet uses a specific lookup table to position the focus character:
+- Length 1: Index 0
+- Length 2–5: Index 1
+- Length 6–9: Index 2
+- Length 10–13: Index 3
+- Length 14+: Index 4
+
+*Note: Punctuation is ignored for position calculations.*
+
+### Timing & Delays
+To improve comprehension, PaperJet adjusts the speed based on word length and punctuation:
+
+#### Length Factors
+- 1–5 characters: 1.0x (base)
+- 6–8 characters: 1.1x
+- 9–12 characters: 1.2x
+- 13–16 characters: 1.35x
+- 17+ characters: 1.5x
+
+#### Punctuation Delays
+- `,`: +100 ms
+- `;`: +140 ms
+- `:`: +160 ms
+- `.`: +220 ms
+- `?` or `!`: +250 ms
+- Newline: +300 ms
+
+## Development
+```bash
+npm install
+npm run dev
+```

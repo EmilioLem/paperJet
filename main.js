@@ -1,0 +1,84 @@
+import { extractWordsFromPdf } from './pdf-processor.js';
+import { RsvpEngine } from './rsvp-engine.js';
+
+document.addEventListener('DOMContentLoaded', () => {
+    const themeSelect = document.getElementById('theme-select');
+    const fileUpload = document.getElementById('file-upload');
+    const wpmSelect = document.getElementById('wpm-select');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const restartBtn = document.getElementById('restart-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const progressSlider = document.getElementById('progress-slider');
+    const progressText = document.getElementById('progress-text');
+
+    const readerContainer = document.getElementById('reader-container');
+    const welcomeScreen = document.getElementById('welcome-screen');
+
+    const displayElements = {
+        left: document.getElementById('word-left'),
+        focus: document.getElementById('word-focus'),
+        right: document.getElementById('word-right')
+    };
+
+    const engine = new RsvpEngine(displayElements);
+
+    // Theme logic
+    themeSelect.addEventListener('change', (e) => {
+        document.body.className = e.target.value;
+    });
+
+    // File upload logic
+    fileUpload.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        welcomeScreen.classList.add('hidden');
+        readerContainer.classList.remove('hidden');
+
+        try {
+            const words = await extractWordsFromPdf(file);
+            engine.setWords(words);
+            progressSlider.max = words.length - 1;
+        } catch (error) {
+            console.error('Error processing PDF:', error);
+            alert('Failed to process PDF. Please try another one.');
+        }
+    });
+
+    // Control logic
+    wpmSelect.addEventListener('change', (e) => {
+        engine.setWpm(e.target.value);
+    });
+
+    playPauseBtn.addEventListener('click', () => {
+        if (engine.isPlaying) {
+            engine.pause();
+            playPauseBtn.textContent = 'Play';
+        } else {
+            engine.play();
+            playPauseBtn.textContent = 'Pause';
+        }
+    });
+
+    restartBtn.addEventListener('click', () => {
+        engine.restart();
+        playPauseBtn.textContent = 'Play';
+    });
+
+    prevBtn.addEventListener('click', () => engine.prev());
+    nextBtn.addEventListener('click', () => engine.next());
+
+    progressSlider.addEventListener('input', (e) => {
+        engine.seek(parseInt(e.target.value));
+    });
+
+    engine.onProgress = (percent, index) => {
+        progressSlider.value = index;
+        progressText.textContent = `${percent}%`;
+    };
+
+    engine.onComplete = () => {
+        playPauseBtn.textContent = 'Play';
+    };
+});
