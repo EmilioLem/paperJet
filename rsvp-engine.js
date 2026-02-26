@@ -11,20 +11,38 @@ export class RsvpEngine {
         this.timer = null;
         this.onProgress = null;
 
-        // New controls
-        this.newlineEnabled = true;
-        this.breakEvery = 0; // 0 means never
-        this.paragraphCount = 0;
+        // Timing configuration
+        this.config = {
+            delays: {
+                symbols: 100, // , ; : ! ?
+                period: 220,  // .
+                newline: 300  // \n
+            },
+            factors: {
+                base: 1.0,    // <= 5 chars
+                medium: 1.1,  // 6-8 chars
+                long: 1.2,    // 9-12 chars
+                extra: 1.35,  // 13-16 chars
+                massive: 1.5  // 17+ chars
+            }
+        };
     }
 
     setWords(words, startIndex = 0) {
         this.words = words;
         this.currentIndex = startIndex;
-        this.updateDisplay(false); // Skip callback during initial set
+        this.updateDisplay(false);
     }
 
     setWpm(wpm) {
         this.wpm = parseInt(wpm);
+    }
+
+    setConfig(newConfig) {
+        this.config = {
+            delays: { ...this.config.delays, ...newConfig.delays },
+            factors: { ...this.config.factors, ...newConfig.factors }
+        };
     }
 
     play() {
@@ -41,7 +59,6 @@ export class RsvpEngine {
     restart() {
         this.pause();
         this.currentIndex = 0;
-        this.paragraphCount = 0; // Reset count
         this.updateDisplay();
     }
 
@@ -78,16 +95,10 @@ export class RsvpEngine {
     }
 
     processWord(word) {
-        // Handle newline marker
         if (word === '\\n') {
             return { left: '', focus: ' ', right: '' };
         }
 
-        // Highlighting rules:
-        // Punctuation is not counted for index.
-        const focusIndices = { 1: 0, 2: 1, 3: 1, 4: 1, 5: 1, 6: 2, 7: 2, 8: 2, 9: 2, 10: 3, 11: 3, 12: 3, 13: 3 };
-
-        // Strip punctuation for length check
         const cleanWord = word.replace(/[^\p{L}\p{N}]/gu, '');
         const cleanLen = cleanWord.length;
 
@@ -98,7 +109,6 @@ export class RsvpEngine {
         else if (cleanLen <= 13) targetFocusIndex = 3;
         else targetFocusIndex = 4;
 
-        // Map target back to original word index
         let charCount = 0;
         let originalFocusIndex = -1;
 
@@ -112,7 +122,6 @@ export class RsvpEngine {
             }
         }
 
-        // If no alphanumeric char found (just punctuation), focus the first char
         if (originalFocusIndex === -1) originalFocusIndex = 0;
 
         return {
@@ -127,19 +136,21 @@ export class RsvpEngine {
         const cleanWord = word.replace(/[^\p{L}\p{N}]/gu, '');
         const len = cleanWord.length;
 
-        let factor = 1.0;
-        if (len >= 6 && len <= 8) factor = 1.2;
-        else if (len >= 9 && len <= 12) factor = 1.4;
-        else if (len >= 13 && len <= 16) factor = 1.7;
-        else if (len >= 17) factor = 2.0;
+        let factor = this.config.factors.base;
+        if (len >= 6 && len <= 8) factor = this.config.factors.medium;
+        else if (len >= 9 && len <= 12) factor = this.config.factors.long;
+        else if (len >= 13 && len <= 16) factor = this.config.factors.extra;
+        else if (len >= 17) factor = this.config.factors.massive;
 
         let extra = 0;
-        if (word.includes(',')) extra += 100;
-        if (word.includes(';')) extra += 140;
-        if (word.includes(':')) extra += 160;
-        if (word.includes('.')) extra += 220;
-        if (word.includes('?') || word.includes('!')) extra += 250;
-        if (word.includes('\\n') && this.newlineEnabled) extra += 300;
+        if (/[ ,;:!?]/.test(word)) {
+            // Check for symbols combined
+            if (word.includes(',') || word.includes(';') || word.includes(':') || word.includes('!') || word.includes('?')) {
+                extra += this.config.delays.symbols;
+            }
+        }
+        if (word.includes('.')) extra += this.config.delays.period;
+        if (word.includes('\\n')) extra += this.config.delays.newline;
 
         return (baseDelay * factor) + extra;
     }
@@ -150,16 +161,7 @@ export class RsvpEngine {
         this.updateDisplay();
 
         const word = this.words[this.currentIndex];
-        let delay = this.calculateDelay(word);
-
-        // Handle "Break Every X Paragraphs"
-        if (word === '\\n') {
-            this.paragraphCount++;
-            if (this.breakEvery > 0 && this.paragraphCount >= this.breakEvery) {
-                delay = 3000; // 3 second break
-                this.paragraphCount = 0; // Reset count after break
-            }
-        }
+        const delay = this.calculateDelay(word);
 
         this.timer = setTimeout(() => {
             this.currentIndex++;
@@ -172,3 +174,4 @@ export class RsvpEngine {
         }, delay);
     }
 }
+

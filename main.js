@@ -30,19 +30,14 @@ document.addEventListener('DOMContentLoaded', () => {
             'welcome-title': 'Bienvenido a PaperJet',
             'welcome-subtitle': 'Sube un PDF para empezar a leer a la velocidad de la luz.',
             'choose-pdf': 'Elegir PDF',
-            'newline-pause': 'Pausa de Nueva Línea:',
-            'break-every': 'Romper cada:',
-            'never': 'Nunca',
-            '1-para': '1 Párrafo',
-            '3-para': '3 Párrafos',
-            '5-para': '5 Párrafos',
-            '10-para': '10 Párrafos',
-            '15-para': '15 Párrafos',
-            '30-para': '30 Párrafos',
-            '50-para': '50 Párrafos',
-            '100-para': '100 Párrafos',
-            '250-para': '250 Párrafos',
-            '500-para': '500 Párrafos',
+            'delay-symbols': 'Símbolos (, ; : ! ?)',
+            'delay-period': 'Puntos (.)',
+            'delay-newline': 'Nueva Línea (\\n)',
+            'factor-medium': 'Factor Palabras (6-8)',
+            'factor-long': 'Factor Palabras (9-12)',
+            'factor-extra': 'Factor Palabras (13-16)',
+            'factor-massive': 'Factor Palabras (17+)',
+            'pause-settings': 'Ajustes de Tiempo',
             'play': 'Reproducir',
             'pause': 'Pausar',
             'restart': 'Reiniciar',
@@ -54,19 +49,14 @@ document.addEventListener('DOMContentLoaded', () => {
             'welcome-title': 'Welcome to PaperJet',
             'welcome-subtitle': 'Upload a PDF to start reading at light speed.',
             'choose-pdf': 'Choose PDF',
-            'newline-pause': 'Newline Pause:',
-            'break-every': 'Break every:',
-            'never': 'Never',
-            '1-para': '1 Paragraph',
-            '3-para': '3 Paragraphs',
-            '5-para': '5 Paragraphs',
-            '10-para': '10 Paragraphs',
-            '15-para': '15 Paragraphs',
-            '30-para': '30 Paragraphs',
-            '50-para': '50 Paragraphs',
-            '100-para': '100 Paragraphs',
-            '250-para': '250 Paragraphs',
-            '500-para': '500 Paragraphs',
+            'delay-symbols': 'Symbols (, ; : ! ?)',
+            'delay-period': 'Periods (.)',
+            'delay-newline': 'New Line (\\n)',
+            'factor-medium': 'Word Factor (6-8)',
+            'factor-long': 'Word Factor (9-12)',
+            'factor-extra': 'Word Factor (13-16)',
+            'factor-massive': 'Word Factor (17+)',
+            'pause-settings': 'Timing Settings',
             'play': 'Play',
             'pause': 'Pause',
             'restart': 'Restart',
@@ -93,6 +83,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const engine = new RsvpEngine(displayElements);
 
+    // Settings Panel Selectors
+    const settingsToggleBtn = document.getElementById('settings-toggle-btn');
+    const settingsPanel = document.getElementById('settings-panel');
+    const delaySymbols = document.getElementById('delay-symbols');
+    const delayPeriod = document.getElementById('delay-period');
+    const delayNewline = document.getElementById('delay-newline');
+    const factorMedium = document.getElementById('factor-medium');
+    const factorLong = document.getElementById('factor-long');
+    const factorExtra = document.getElementById('factor-extra');
+    const factorMassive = document.getElementById('factor-massive');
+
     // Initial Load Settings
     const savedLang = localStorage.getItem('paperjet-lang') || 'es';
     const savedTheme = localStorage.getItem('paperjet-theme') || 'theme-warm';
@@ -100,7 +101,50 @@ document.addEventListener('DOMContentLoaded', () => {
     langSelect.value = savedLang;
     themeSelect.value = savedTheme;
     document.body.className = savedTheme;
+
+    // Load Timing Settings
+    const loadTimingSettings = () => {
+        const settings = JSON.parse(localStorage.getItem('paperjet-timing')) || {
+            delays: { symbols: 100, period: 220, newline: 300 },
+            factors: { medium: 1.1, long: 1.2, extra: 1.35, massive: 1.5 }
+        };
+
+        delaySymbols.value = settings.delays.symbols;
+        delayPeriod.value = settings.delays.period;
+        delayNewline.value = settings.delays.newline;
+        factorMedium.value = settings.factors.medium;
+        factorLong.value = settings.factors.long;
+        factorExtra.value = settings.factors.extra;
+        factorMassive.value = settings.factors.massive;
+
+        engine.setConfig(settings);
+    };
+
+    const saveTimingSettings = () => {
+        const settings = {
+            delays: {
+                symbols: parseInt(delaySymbols.value),
+                period: parseInt(delayPeriod.value),
+                newline: parseInt(delayNewline.value)
+            },
+            factors: {
+                medium: parseFloat(factorMedium.value),
+                long: parseFloat(factorLong.value),
+                extra: parseFloat(factorExtra.value),
+                massive: parseFloat(factorMassive.value)
+            }
+        };
+        localStorage.setItem('paperjet-timing', JSON.stringify(settings));
+        engine.setConfig(settings);
+    };
+
+    loadTimingSettings();
     applyTranslations(savedLang);
+
+    // Toggle Settings Panel
+    settingsToggleBtn.addEventListener('click', () => {
+        settingsPanel.classList.toggle('hidden');
+    });
 
     // Theme logic
     themeSelect.addEventListener('change', (e) => {
@@ -112,6 +156,11 @@ document.addEventListener('DOMContentLoaded', () => {
     langSelect.addEventListener('change', (e) => {
         applyTranslations(e.target.value);
         localStorage.setItem('paperjet-lang', e.target.value);
+    });
+
+    // Timing logic
+    [delaySymbols, delayPeriod, delayNewline, factorMedium, factorLong, factorExtra, factorMassive].forEach(el => {
+        el.addEventListener('change', saveTimingSettings);
     });
 
     // File upload logic
@@ -139,14 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Control logic
     wpmSelect.addEventListener('change', (e) => {
         engine.setWpm(e.target.value);
-    });
-
-    newlineToggle.addEventListener('change', (e) => {
-        engine.newlineEnabled = e.target.checked;
-    });
-
-    breakSelect.addEventListener('change', (e) => {
-        engine.breakEvery = parseInt(e.target.value);
     });
 
     playPauseBtn.addEventListener('click', () => {
