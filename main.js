@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'factor-extra': 'Factor Palabras (13-16)',
             'factor-massive': 'Factor Palabras (17+)',
             'pause-settings': 'Ajustes de Tiempo',
+            'reset-defaults': 'Resetear a defaults',
             'play': 'Reproducir',
             'pause': 'Pausar',
             'restart': 'Reiniciar',
@@ -57,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'factor-extra': 'Word Factor (13-16)',
             'factor-massive': 'Word Factor (17+)',
             'pause-settings': 'Timing Settings',
+            'reset-defaults': 'Reset to defaults',
             'play': 'Play',
             'pause': 'Pause',
             'restart': 'Restart',
@@ -86,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Settings Panel Selectors
     const settingsToggleBtn = document.getElementById('settings-toggle-btn');
     const settingsPanel = document.getElementById('settings-panel');
+    const resetDefaultsBtn = document.getElementById('reset-defaults-btn');
     const delaySymbols = document.getElementById('delay-symbols');
     const delayPeriod = document.getElementById('delay-period');
     const delayNewline = document.getElementById('delay-newline');
@@ -93,6 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const factorLong = document.getElementById('factor-long');
     const factorExtra = document.getElementById('factor-extra');
     const factorMassive = document.getElementById('factor-massive');
+
+    // Default Settings
+    const DEFAULT_TIMING = {
+        punctuationFactors: { symbols: 0.3, period: 0.8, newline: 1.2 },
+        factors: { medium: 1.1, long: 1.2, extra: 1.35, massive: 1.5 }
+    };
 
     // Initial Load Settings
     const savedLang = localStorage.getItem('paperjet-lang') || 'es';
@@ -109,27 +118,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // Migration from old millisecond-based format
         if (settings && settings.delays) {
             settings.punctuationFactors = {
-                symbols: (settings.delays.symbols / 1000) || 0.1,
-                period: (settings.delays.period / 1000) || 0.3,
-                newline: (settings.delays.newline / 1000) || 0.5
+                symbols: (settings.delays.symbols / 1000) || DEFAULT_TIMING.punctuationFactors.symbols,
+                period: (settings.delays.period / 1000) || DEFAULT_TIMING.punctuationFactors.period,
+                newline: (settings.delays.newline / 1000) || DEFAULT_TIMING.punctuationFactors.newline
             };
             delete settings.delays;
         }
 
         if (!settings) {
-            settings = {
-                punctuationFactors: { symbols: 0.1, period: 0.3, newline: 0.5 },
-                factors: { medium: 1.1, long: 1.2, extra: 1.35, massive: 1.5 }
-            };
+            settings = JSON.parse(JSON.stringify(DEFAULT_TIMING));
         }
 
-        delaySymbols.value = settings.punctuationFactors?.symbols ?? 0.1;
-        delayPeriod.value = settings.punctuationFactors?.period ?? 0.3;
-        delayNewline.value = settings.punctuationFactors?.newline ?? 0.5;
-        factorMedium.value = settings.factors.medium;
-        factorLong.value = settings.factors.long;
-        factorExtra.value = settings.factors.extra;
-        factorMassive.value = settings.factors.massive;
+        delaySymbols.value = settings.punctuationFactors?.symbols ?? DEFAULT_TIMING.punctuationFactors.symbols;
+        delayPeriod.value = settings.punctuationFactors?.period ?? DEFAULT_TIMING.punctuationFactors.period;
+        delayNewline.value = settings.punctuationFactors?.newline ?? DEFAULT_TIMING.punctuationFactors.newline;
+        factorMedium.value = settings.factors.medium || DEFAULT_TIMING.factors.medium;
+        factorLong.value = settings.factors.long || DEFAULT_TIMING.factors.long;
+        factorExtra.value = settings.factors.extra || DEFAULT_TIMING.factors.extra;
+        factorMassive.value = settings.factors.massive || DEFAULT_TIMING.factors.massive;
 
         engine.setConfig(settings);
     };
@@ -158,6 +164,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Toggle Settings Panel
     settingsToggleBtn.addEventListener('click', () => {
         settingsPanel.classList.toggle('hidden');
+    });
+
+    // Reset Defaults
+    resetDefaultsBtn.addEventListener('click', () => {
+        if (confirm(translations[langSelect.value]['reset-defaults'] + '?')) {
+            localStorage.removeItem('paperjet-timing');
+            loadTimingSettings();
+        }
     });
 
     // Theme logic

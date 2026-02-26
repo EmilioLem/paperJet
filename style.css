@@ -277,6 +277,29 @@ footer {
     width: 100%;
 }
 
+.reset-container {
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+#reset-defaults-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 0.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    opacity: 0.6;
+    transition: opacity 0.2s, background 0.2s;
+    width: 100%;
+}
+
+#reset-defaults-btn:hover {
+    opacity: 1;
+    background: var(--panel-bg);
+}
+
 
 .playback-controls {
     display: flex;
