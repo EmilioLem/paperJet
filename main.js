@@ -104,14 +104,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load Timing Settings
     const loadTimingSettings = () => {
-        const settings = JSON.parse(localStorage.getItem('paperjet-timing')) || {
-            delays: { symbols: 100, period: 220, newline: 300 },
-            factors: { medium: 1.1, long: 1.2, extra: 1.35, massive: 1.5 }
-        };
+        let settings = JSON.parse(localStorage.getItem('paperjet-timing'));
 
-        delaySymbols.value = settings.delays.symbols;
-        delayPeriod.value = settings.delays.period;
-        delayNewline.value = settings.delays.newline;
+        // Migration from old millisecond-based format
+        if (settings && settings.delays) {
+            settings.punctuationFactors = {
+                symbols: (settings.delays.symbols / 1000) || 0.1,
+                period: (settings.delays.period / 1000) || 0.3,
+                newline: (settings.delays.newline / 1000) || 0.5
+            };
+            delete settings.delays;
+        }
+
+        if (!settings) {
+            settings = {
+                punctuationFactors: { symbols: 0.1, period: 0.3, newline: 0.5 },
+                factors: { medium: 1.1, long: 1.2, extra: 1.35, massive: 1.5 }
+            };
+        }
+
+        delaySymbols.value = settings.punctuationFactors?.symbols ?? 0.1;
+        delayPeriod.value = settings.punctuationFactors?.period ?? 0.3;
+        delayNewline.value = settings.punctuationFactors?.newline ?? 0.5;
         factorMedium.value = settings.factors.medium;
         factorLong.value = settings.factors.long;
         factorExtra.value = settings.factors.extra;
@@ -122,10 +136,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const saveTimingSettings = () => {
         const settings = {
-            delays: {
-                symbols: parseInt(delaySymbols.value),
-                period: parseInt(delayPeriod.value),
-                newline: parseInt(delayNewline.value)
+            punctuationFactors: {
+                symbols: parseFloat(delaySymbols.value),
+                period: parseFloat(delayPeriod.value),
+                newline: parseFloat(delayNewline.value)
             },
             factors: {
                 medium: parseFloat(factorMedium.value),
@@ -196,6 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
             engine.pause();
             playPauseBtn.textContent = translations[lang]['play'];
         } else {
+            // Auto-hide settings panel on play
+            settingsPanel.classList.add('hidden');
             engine.play();
             playPauseBtn.textContent = translations[lang]['pause'];
         }

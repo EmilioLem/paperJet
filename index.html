@@ -76,91 +76,89 @@
 
             <div id="settings-panel" class="hidden">
                 <div class="settings-grid">
-                    <div class="setting-item">
-                        <label data-i18n="delay-symbols">Símbolos (, ; : ! ?)</label>
-                        <select id="delay-symbols">
-                            <option value="0">0</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100" selected>100</option>
-                            <option value="150">150</option>
-                            <option value="200">200</option>
-                            <option value="250">250</option>
-                            <option value="300">300</option>
-                            <option value="500">500</option>
-                            <option value="1000">1000</option>
-                        </select>
+                    <!-- Column 1: Punctuation -->
+                    <div class="settings-column">
+                        <div class="setting-item">
+                            <label data-i18n="delay-symbols">Símbolos (, ; : ! ?)</label>
+                            <select id="delay-symbols">
+                                <option value="0">0</option>
+                                <option value="0.05">0.05</option>
+                                <option value="0.1" selected>0.1</option>
+                                <option value="0.2">0.2</option>
+                                <option value="0.3">0.3</option>
+                                <option value="0.5">0.5</option>
+                                <option value="1.0">1.0</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label data-i18n="delay-period">Puntos (.)</label>
+                            <select id="delay-period">
+                                <option value="0">0</option>
+                                <option value="0.1">0.1</option>
+                                <option value="0.2">0.2</option>
+                                <option value="0.3" selected>0.3</option>
+                                <option value="0.5">0.5</option>
+                                <option value="0.8">0.8</option>
+                                <option value="1.0">1.0</option>
+                                <option value="1.5">1.5</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label data-i18n="delay-newline">Nueva Línea (\n)</label>
+                            <select id="delay-newline">
+                                <option value="0">0</option>
+                                <option value="0.1">0.1</option>
+                                <option value="0.2">0.2</option>
+                                <option value="0.3">0.3</option>
+                                <option value="0.4">0.4</option>
+                                <option value="0.5" selected>0.5</option>
+                                <option value="0.7">0.7</option>
+                                <option value="1.0">1.0</option>
+                                <option value="2.0">2.0</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="setting-item">
-                        <label data-i18n="delay-period">Puntos (.)</label>
-                        <select id="delay-period">
-                            <option value="0">0</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                            <option value="150">150</option>
-                            <option value="200">200</option>
-                            <option value="220" selected>220</option>
-                            <option value="250">250</option>
-                            <option value="300">300</option>
-                            <option value="500">500</option>
-                            <option value="1000">1000</option>
-                        </select>
-                    </div>
-                    <div class="setting-item">
-                        <label data-i18n="delay-newline">Nueva Línea (\n)</label>
-                        <select id="delay-newline">
-                            <option value="0">0</option>
-                            <option value="25">25</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                            <option value="150">150</option>
-                            <option value="200">200</option>
-                            <option value="250">250</option>
-                            <option value="300" selected>300</option>
-                            <option value="500">500</option>
-                            <option value="1000">1000</option>
-                        </select>
-                    </div>
-                    <!-- Word Length Factors -->
-                    <div class="setting-item">
-                        <label data-i18n="factor-medium">Factor Palabras (6-8)</label>
-                        <select id="factor-medium">
-                            <option value="1.0">1.0</option>
-                            <option value="1.05">1.05</option>
-                            <option value="1.1" selected>1.1</option>
-                            <option value="1.15">1.15</option>
-                            <option value="1.2">1.2</option>
-                        </select>
-                    </div>
-                    <div class="setting-item">
-                        <label data-i18n="factor-long">Factor Palabras (9-12)</label>
-                        <select id="factor-long">
-                            <option value="1.1">1.1</option>
-                            <option value="1.2" selected>1.2</option>
-                            <option value="1.3">1.3</option>
-                            <option value="1.4">1.4</option>
-                        </select>
-                    </div>
-                    <div class="setting-item">
-                        <label data-i18n="factor-extra">Factor Palabras (13-16)</label>
-                        <select id="factor-extra">
-                            <option value="1.2">1.2</option>
-                            <option value="1.3">1.3</option>
-                            <option value="1.35" selected>1.35</option>
-                            <option value="1.4">1.4</option>
-                            <option value="1.5">1.5</option>
-                        </select>
-                    </div>
-                    <div class="setting-item">
-                        <label data-i18n="factor-massive">Factor Palabras (17+)</label>
-                        <select id="factor-massive">
-                            <option value="1.3">1.3</option>
-                            <option value="1.4">1.4</option>
-                            <option value="1.5" selected>1.5</option>
-                            <option value="1.7">1.7</option>
-                            <option value="2.0">2.0</option>
-                        </select>
+                    <!-- Column 2: Word Length Factors -->
+                    <div class="settings-column">
+                        <div class="setting-item">
+                            <label data-i18n="factor-medium">Factor Palabras (6-8)</label>
+                            <select id="factor-medium">
+                                <option value="1.0">1.0</option>
+                                <option value="1.05">1.05</option>
+                                <option value="1.1" selected>1.1</option>
+                                <option value="1.15">1.15</option>
+                                <option value="1.2">1.2</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label data-i18n="factor-long">Factor Palabras (9-12)</label>
+                            <select id="factor-long">
+                                <option value="1.1">1.1</option>
+                                <option value="1.2" selected>1.2</option>
+                                <option value="1.3">1.3</option>
+                                <option value="1.4">1.4</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label data-i18n="factor-extra">Factor Palabras (13-16)</label>
+                            <select id="factor-extra">
+                                <option value="1.2">1.2</option>
+                                <option value="1.3">1.3</option>
+                                <option value="1.35" selected>1.35</option>
+                                <option value="1.4">1.4</option>
+                                <option value="1.5">1.5</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <label data-i18n="factor-massive">Factor Palabras (17+)</label>
+                            <select id="factor-massive">
+                                <option value="1.3">1.3</option>
+                                <option value="1.4">1.4</option>
+                                <option value="1.5" selected>1.5</option>
+                                <option value="1.7">1.7</option>
+                                <option value="2.0">2.0</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>

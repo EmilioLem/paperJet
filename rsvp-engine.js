@@ -13,10 +13,10 @@ export class RsvpEngine {
 
         // Timing configuration
         this.config = {
-            delays: {
-                symbols: 100, // , ; : ! ?
-                period: 220,  // .
-                newline: 300  // \n
+            punctuationFactors: {
+                symbols: 0.1, // , ; : ! ?
+                period: 0.3,  // .
+                newline: 0.5  // \n
             },
             factors: {
                 base: 1.0,    // <= 5 chars
@@ -31,7 +31,7 @@ export class RsvpEngine {
     setWords(words, startIndex = 0) {
         this.words = words;
         this.currentIndex = startIndex;
-        this.updateDisplay(false);
+        this.updateDisplay(true); // Trigger callback to sync progress UI
     }
 
     setWpm(wpm) {
@@ -40,7 +40,7 @@ export class RsvpEngine {
 
     setConfig(newConfig) {
         this.config = {
-            delays: { ...this.config.delays, ...newConfig.delays },
+            punctuationFactors: { ...this.config.punctuationFactors, ...newConfig.punctuationFactors },
             factors: { ...this.config.factors, ...newConfig.factors }
         };
     }
@@ -142,17 +142,16 @@ export class RsvpEngine {
         else if (len >= 13 && len <= 16) factor = this.config.factors.extra;
         else if (len >= 17) factor = this.config.factors.massive;
 
-        let extra = 0;
+        let extraFactor = 0;
         if (/[ ,;:!?]/.test(word)) {
-            // Check for symbols combined
             if (word.includes(',') || word.includes(';') || word.includes(':') || word.includes('!') || word.includes('?')) {
-                extra += this.config.delays.symbols;
+                extraFactor += this.config.punctuationFactors.symbols;
             }
         }
-        if (word.includes('.')) extra += this.config.delays.period;
-        if (word.includes('\\n')) extra += this.config.delays.newline;
+        if (word.includes('.')) extraFactor += this.config.punctuationFactors.period;
+        if (word.includes('\\n')) extraFactor += this.config.punctuationFactors.newline;
 
-        return (baseDelay * factor) + extra;
+        return baseDelay * (factor + extraFactor);
     }
 
     run() {
