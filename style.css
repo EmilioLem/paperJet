@@ -120,6 +120,7 @@ main {
     flex-direction: column;
     justify-content: center;
     position: relative;
+    cursor: pointer;
 }
 
 #reader-display {
@@ -352,4 +353,22 @@ select {
     border: 1px solid var(--border-color);
     background: var(--bg-color);
     color: var(--text-color);
+}
+
+/* Minimalist UI for playback */
+body.minimal-ui #settings-toggle-btn,
+body.minimal-ui #settings-panel,
+body.minimal-ui #restart-btn,
+body.minimal-ui .playback-controls,
+body.minimal-ui #pdf-name {
+    display: none !important;
+}
+
+body.minimal-ui .footer-controls {
+    justify-content: center;
+}
+
+body.minimal-ui .progress-container {
+    width: 100%;
+    max-width: 600px;
 }

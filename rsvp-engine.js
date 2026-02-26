@@ -14,9 +14,9 @@ export class RsvpEngine {
         // Timing configuration
         this.config = {
             punctuationFactors: {
-                symbols: 0.1, // , ; : ! ?
-                period: 0.3,  // .
-                newline: 0.5  // \n
+                symbols: 0.3, // , ; : ! ?
+                period: 0.8,  // .
+                newline: 1.2  // \n
             },
             factors: {
                 base: 1.0,    // <= 5 chars
@@ -26,6 +26,12 @@ export class RsvpEngine {
                 massive: 1.5  // 17+ chars
             }
         };
+
+        // Ramping state
+        this.isRamping = false;
+        this.rampType = null; // 'up' or 'down'
+        this.rampStep = 0;
+        this.rampTotalSteps = 12;
     }
 
     setWords(words, startIndex = 0) {
@@ -46,13 +52,32 @@ export class RsvpEngine {
     }
 
     play() {
-        if (this.isPlaying || this.currentIndex >= this.words.length) return;
-        this.isPlaying = true;
-        this.run();
+        if (this.isPlaying && (!this.isRamping || this.rampType === 'up')) return;
+
+        if (!this.isPlaying) {
+            this.isPlaying = true;
+            this.isRamping = true;
+            this.rampType = 'up';
+            this.rampStep = 0;
+            this.run();
+        } else if (this.isRamping && this.rampType === 'down') {
+            // Reverse to ramp up
+            this.rampType = 'up';
+            this.rampStep = Math.max(0, this.rampTotalSteps - this.rampStep);
+        }
+    }
+
+    requestPause() {
+        if (!this.isPlaying || (this.isRamping && this.rampType === 'down')) return;
+        this.isRamping = true;
+        this.rampType = 'down';
+        this.rampStep = 0;
     }
 
     pause() {
         this.isPlaying = false;
+        this.isRamping = false;
+        this.rampType = null;
         if (this.timer) clearTimeout(this.timer);
     }
 
@@ -151,7 +176,22 @@ export class RsvpEngine {
         if (word.includes('.')) extraFactor += this.config.punctuationFactors.period;
         if (word.includes('\\n')) extraFactor += this.config.punctuationFactors.newline;
 
-        return baseDelay * (factor + extraFactor);
+        let delay = baseDelay * (factor + extraFactor);
+
+        // Apply ramping multiplier
+        if (this.isRamping) {
+            let multiplier = 1;
+            if (this.rampType === 'up') {
+                // Starts slow (3x) and goes to 1x
+                multiplier = 3 - (this.rampStep / this.rampTotalSteps) * 2;
+            } else if (this.rampType === 'down') {
+                // Starts at 1x and goes slow (3x)
+                multiplier = 1 + (this.rampStep / this.rampTotalSteps) * 2;
+            }
+            delay *= multiplier;
+        }
+
+        return delay;
     }
 
     run() {
@@ -163,6 +203,20 @@ export class RsvpEngine {
         const delay = this.calculateDelay(word);
 
         this.timer = setTimeout(() => {
+            if (this.isRamping) {
+                this.rampStep++;
+                if (this.rampStep >= this.rampTotalSteps) {
+                    if (this.rampType === 'down') {
+                        this.pause();
+                        return;
+                    } else {
+                        this.isRamping = false;
+                        this.rampType = null;
+                        this.rampStep = 0;
+                    }
+                }
+            }
+
             this.currentIndex++;
             if (this.currentIndex < this.words.length) {
                 this.run();

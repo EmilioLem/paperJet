@@ -6,15 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const langSelect = document.getElementById('lang-select');
     const fileUpload = document.getElementById('file-upload');
     const wpmSelect = document.getElementById('wpm-select');
-    const playPauseBtn = document.getElementById('play-pause-btn');
     const restartBtn = document.getElementById('restart-btn');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     const progressSlider = document.getElementById('progress-slider');
     const progressText = document.getElementById('progress-text');
     const pdfNameDisplay = document.getElementById('pdf-name');
-    const newlineToggle = document.getElementById('newline-pause-toggle');
-    const breakSelect = document.getElementById('break-select');
 
     const readerContainer = document.getElementById('reader-container');
     const welcomeScreen = document.getElementById('welcome-screen');
@@ -75,12 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.textContent = translations[lang][key];
             }
         });
-        // Update dynamic elements
-        if (engine.isPlaying) {
-            playPauseBtn.textContent = translations[lang]['pause'];
-        } else {
-            playPauseBtn.textContent = translations[lang]['play'];
-        }
     }
 
     const engine = new RsvpEngine(displayElements);
@@ -115,7 +106,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadTimingSettings = () => {
         let settings = JSON.parse(localStorage.getItem('paperjet-timing'));
 
-        // Migration from old millisecond-based format
         if (settings && settings.delays) {
             settings.punctuationFactors = {
                 symbols: (settings.delays.symbols / 1000) || DEFAULT_TIMING.punctuationFactors.symbols,
@@ -205,8 +195,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const savedIndex = localStorage.getItem(`paperjet-progress-${file.name}`);
             const startIndex = savedIndex ? parseInt(savedIndex) : 0;
 
-            engine.setWords(words, startIndex);
             progressSlider.max = words.length - 1;
+            engine.setWords(words, startIndex);
         } catch (error) {
             console.error('Error processing PDF:', error);
             alert('Failed to process PDF. Please try another one.');
@@ -218,22 +208,34 @@ document.addEventListener('DOMContentLoaded', () => {
         engine.setWpm(e.target.value);
     });
 
-    playPauseBtn.addEventListener('click', () => {
-        const lang = langSelect.value;
-        if (engine.isPlaying) {
-            engine.pause();
-            playPauseBtn.textContent = translations[lang]['play'];
+    // Gesture control for Play/Pause
+    readerContainer.addEventListener('click', (e) => {
+        if (engine.words.length === 0) return;
+        if (e.target.closest('.welcome-screen')) return;
+
+        if (engine.isPlaying && (!engine.isRamping || engine.rampType === 'up')) {
+            engine.requestPause();
         } else {
             // Auto-hide settings panel on play
             settingsPanel.classList.add('hidden');
+            document.body.classList.add('minimal-ui');
             engine.play();
-            playPauseBtn.textContent = translations[lang]['pause'];
         }
     });
 
+    // Restore UI when engine stops
+    const originalEnginePause = engine.pause.bind(engine);
+    engine.pause = () => {
+        originalEnginePause();
+        document.body.classList.remove('minimal-ui');
+    };
+
+    engine.onComplete = () => {
+        document.body.classList.remove('minimal-ui');
+    };
+
     restartBtn.addEventListener('click', () => {
         engine.restart();
-        playPauseBtn.textContent = translations[langSelect.value]['play'];
     });
 
     prevBtn.addEventListener('click', () => engine.prev());
@@ -247,16 +249,11 @@ document.addEventListener('DOMContentLoaded', () => {
         progressSlider.value = index;
         progressText.textContent = `${percent}%`;
 
-        // Save progress if a file is loaded
         if (engine.words.length > 0) {
             const fileName = pdfNameDisplay.textContent;
             if (fileName) {
                 localStorage.setItem(`paperjet-progress-${fileName}`, index);
             }
         }
-    };
-
-    engine.onComplete = () => {
-        playPauseBtn.textContent = translations[langSelect.value]['play'];
     };
 });
